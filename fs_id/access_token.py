@@ -31,5 +31,5 @@ class AccessTokenClass:
 
 
 if __name__ == "__main__":
-    token = AccessTokenClass()
-    print(token.get_access_token())
+    access_token = AccessTokenClass()
+    print(access_token.get_access_token())

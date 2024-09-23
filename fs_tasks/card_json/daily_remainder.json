@@ -1,0 +1,109 @@
+{
+    "config": {
+        "update_multi": true
+    },
+    "i18n_elements": {
+        "zh_cn": [
+            {
+                "tag": "table",
+                "columns": [
+                    {
+                        "data_type": "text",
+                        "name": "task_name",
+                        "display_name": "任务",
+                        "horizontal_align": "left",
+                        "width": "auto"
+                    },
+                    {
+                        "data_type": "options",
+                        "name": "task_priority",
+                        "display_name": "优先级",
+                        "horizontal_align": "left",
+                        "width": "auto"
+                    },
+                    {
+                        "data_type": "date",
+                        "name": "end_date",
+                        "display_name": "截止时间",
+                        "horizontal_align": "left",
+                        "width": "auto",
+                        "date_format": "YYYY/MM/DD"
+                    }
+                ],
+                "rows": [],
+                "row_height": "low",
+                "header_style": {
+                    "background_style": "none",
+                    "bold": true,
+                    "lines": 1
+                },
+                "page_size": 5
+            },
+            {
+                "tag": "column_set",
+                "flex_mode": "none",
+                "horizontal_spacing": "8px",
+                "horizontal_align": "left",
+                "columns": [
+                    {
+                        "tag": "column",
+                        "width": "weighted",
+                        "vertical_align": "top",
+                        "vertical_spacing": "8px",
+                        "elements": [
+                            {
+                                "tag": "button",
+                                "text": {
+                                    "tag": "plain_text",
+                                    "content": "查看任务"
+                                },
+                                "type": "primary",
+                                "width": "default",
+                                "size": "medium",
+                                "icon": {
+                                    "tag": "standard_icon",
+                                    "token": "find-and-replace_outlined"
+                                },
+                                "behaviors": [
+                                    {
+                                        "type": "open_url",
+                                        "default_url": "https://mcns8dt9m0cm.feishu.cn/base/ULsNbOsDGaY8i2sppIkcRnqKn6g?table=tblF9ipzhdVIHmrK&view=vewox8xE5E",
+                                        "pc_url": "",
+                                        "ios_url": "",
+                                        "android_url": ""
+                                    }
+                                ]
+                            }
+                        ],
+                        "weight": 1
+                    },
+                    {
+                        "tag": "column",
+                        "width": "auto",
+                        "vertical_align": "top",
+                        "vertical_spacing": "8px",
+                        "elements": []
+                    }
+                ],
+                "margin": "16px 0px 0px 0px"
+            }
+        ]
+    },
+    "i18n_header": {
+        "zh_cn": {
+            "title": {
+                "tag": "plain_text",
+                "content": "今日任务"
+            },
+            "subtitle": {
+                "tag": "plain_text",
+                "content": "请按时保质保量完成"
+            },
+            "template": "blue",
+            "ud_icon": {
+                "tag": "standard_icon",
+                "token": "meego_colorful"
+            }
+        }
+    }
+}

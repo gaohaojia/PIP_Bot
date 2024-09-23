@@ -15,14 +15,11 @@ def get_users_id_from_chat(access_token, chat_id):
         result = response.json()
         if result["code"] != 0:
             break
-        if result["data"]["has_more"]:
-            page_token = result["data"]["page_token"]
-        else:
-            page_token = None
         for member in result["data"]["items"]:
             yield member["member_id"]
-        if not page_token:
+        if not result["data"]["has_more"]:
             break
+        page_token = result["data"]["page_token"]
 
 
 if __name__ == "__main__":
