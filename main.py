@@ -14,8 +14,17 @@ CHAT_NAME = "战队大群"
 
 access_token_obj = AccessTokenClass()
 
+GLOBAL_USER_ID_LIST = []
 
-def daily_tasks_remainder(user_id_list):
+def update_user_id_list():
+    global GLOBAL_USER_ID_LIST
+    user_id_list = list(get_users_id_from_chat(access_token, chat_id))
+    if len(user_id_list) == 0:
+        print("get users_id_from_chat failed")
+        return
+    GLOBAL_USER_ID_LIST = user_id_list
+
+def daily_tasks_remainder():
     access_token = access_token_obj.get_access_token()
     if not access_token:
         print("get access_token failed")
@@ -23,7 +32,7 @@ def daily_tasks_remainder(user_id_list):
     task_list = get_tasks_items(
         access_token, ["任务", "优先级", "状态", "开始时间", "截止时间", "任务执行人"]
     )
-    for user_id in user_id_list:
+    for user_id in GLOBAL_USER_ID_LIST:
         task_name_list = []
         task_priority_list = []
         end_date_list = []
@@ -61,13 +70,12 @@ if __name__ == "__main__":
         print("get chat_id failed")
         exit()
 
-    # get users_id_from_chat
-    user_id_list = list(get_users_id_from_chat(access_token, chat_id))
-    if len(user_id_list) == 0:
-        print("get users_id_from_chat failed")
-        exit()
+    schedule.every().day.at("7:30").do(update_user_id_list)
+    schedule.every().day.at("8:00").do(daily_tasks_remainder)
 
-    daily_tasks_remainder(user_id_list)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
     # send_daily_remainder(access_token, "ou_d11957b1eccd9e340b72fbc83c6eb41c", ["任务1", "任务2"], ["P0", "P1"], ["1727366400000", "1726329600000"])
     # send_create_project_message(access_token, "ou_d11957b1eccd9e340b72fbc83c6eb41c", "自动化测试项目", "自动化测试项目内容", "1727366400000", "ou_d11957b1eccd9e340b72fbc83c6eb41c", "进行中")
 

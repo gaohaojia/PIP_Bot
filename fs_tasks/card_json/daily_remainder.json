@@ -5,6 +5,12 @@
     "i18n_elements": {
         "zh_cn": [
             {
+                "tag": "markdown",
+                "content": "**今日任务：**",
+                "text_align": "left",
+                "text_size": "normal"
+            },
+            {
                 "tag": "table",
                 "columns": [
                     {
@@ -38,6 +44,12 @@
                     "lines": 1
                 },
                 "page_size": 5
+            },
+            {
+                "tag": "markdown",
+                "content": "有任何疑问请联系对应的项目负责人，战队的发展依靠所有人共同的努力，请按时保质保量完成。",
+                "text_align": "left",
+                "text_size": "normal"
             },
             {
                 "tag": "column_set",
@@ -93,16 +105,16 @@
         "zh_cn": {
             "title": {
                 "tag": "plain_text",
-                "content": "今日任务"
+                "content": "新的一天"
             },
             "subtitle": {
                 "tag": "plain_text",
-                "content": "请按时保质保量完成"
+                "content": ""
             },
             "template": "blue",
             "ud_icon": {
                 "tag": "standard_icon",
-                "token": "meego_colorful"
+                "token": "flag_outlined"
             }
         }
     }

@@ -1,6 +1,14 @@
 import requests
 import json
 import time
+import random
+
+def get_good_morning_message():
+    with open("fs_tasks/good_morning.txt", "r", encoding="utf-8") as f:
+        morning_lines = f.readlines()
+    random_line = random.choice(morning_lines)
+    return random_line
+                        
 
 
 def send_message(access_token, data):
@@ -76,7 +84,8 @@ def send_daily_remainder(
         )
     with open("fs_tasks/card_json/daily_remainder.json", "r", encoding="utf-8") as f:
         json_data = json.load(f)
-    json_data["i18n_elements"]["zh_cn"][0]["rows"] = task_table_data
+    json_data["i18n_elements"]["zh_cn"][1]["rows"] = task_table_data
+    json_data["i18n_header"]["zh_cn"]["subtitle"]["content"] = get_good_morning_message()
     data = {
         "receive_id": user_id,
         "msg_type": "interactive",
