@@ -70,8 +70,8 @@ if __name__ == "__main__":
         print("get chat_id failed")
         exit()
 
-    schedule.every().day.at("7:30").do(update_user_id_list)
-    schedule.every().day.at("8:00").do(daily_tasks_remainder)
+    schedule.every().day.at("7:30:00").do(update_user_id_list)
+    schedule.every().day.at("8:00:00").do(daily_tasks_remainder)
 
     while True:
         schedule.run_pending()
