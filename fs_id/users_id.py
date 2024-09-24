@@ -26,7 +26,7 @@ if __name__ == "__main__":
     from access_token import AccessTokenClass
     from chat_id import get_chat_id
 
-    access_token = AccessTokenClass().get_access_token()
-    chat_id = get_chat_id(access_token, "战队大群")
+    access_token = AccessTokenClass()
+    chat_id = get_chat_id(access_token(), "战队大群")
     for user_id in get_users_id_from_chat(access_token, chat_id):
         print(user_id)

@@ -21,10 +21,7 @@ if __name__ == "__main__":
     from access_token import AccessTokenClass
 
     access_token = AccessTokenClass().get_access_token()
-    if access_token is None:
-        print("get access token failed")
-        exit(1)
-    chat_id = get_chat_id(access_token, "战队大群")
+    chat_id = get_chat_id(access_token(), "战队大群")
     if chat_id:
         print(f"chat_id: {chat_id}")
     else:

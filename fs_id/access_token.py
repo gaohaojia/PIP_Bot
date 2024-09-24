@@ -12,7 +12,7 @@ class AccessTokenClass:
         self.access_token = None
         self.expire_time = 0
 
-    def get_access_token(self):
+    def __get_access_token(self):
         if self.access_token is None or time.time() > self.expire_time:
             url = (
                 "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
@@ -29,7 +29,10 @@ class AccessTokenClass:
             self.expire_time = time.time() + result["expire"] - 10
         return self.access_token
 
+    def __call__(self):
+        return self.__get_access_token()
+
 
 if __name__ == "__main__":
     access_token = AccessTokenClass()
-    print(access_token.get_access_token())
+    print(access_token())
