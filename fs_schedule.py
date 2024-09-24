@@ -12,6 +12,7 @@ from fs_tasks import (
     send_daily_remainder_no_task,
     send_text_message,
     send_daily_report_link,
+    send_off_duty_reminder,
 )
 
 with open("FS_KEY.yaml", "r") as f:
@@ -22,6 +23,7 @@ CHAT_NAME = "战队大群"
 access_token = AccessTokenClass()
 
 GLOBAL_USER_ID_LIST = []
+
 
 def update_user_id_list():
     global GLOBAL_USER_ID_LIST
@@ -35,10 +37,12 @@ def update_user_id_list():
         return
     GLOBAL_USER_ID_LIST = user_id_list
 
+
 def daily_tasks_remainder():
     task_list = get_tasks_items(
         access_token(), ["任务", "优先级", "状态", "开始时间", "截止时间", "任务执行人"]
     )
+    update_user_id_list()
     for user_id in GLOBAL_USER_ID_LIST:
         task_name_list = []
         task_priority_list = []
@@ -60,22 +64,36 @@ def daily_tasks_remainder():
                 continue
         if len(task_name_list) > 0:
             send_daily_remainder(
-                access_token(), user_id, task_name_list, task_priority_list, end_date_list
+                access_token(),
+                user_id,
+                task_name_list,
+                task_priority_list,
+                end_date_list,
             )
         else:
             send_daily_remainder_no_task(access_token(), user_id)
 
+
 def daily_report_remainder():
+    update_user_id_list()
     for user_id in GLOBAL_USER_ID_LIST:
         send_daily_report_link(access_token(), user_id)
 
+
+def off_duty_reminder():
+    update_user_id_list()
+    for user_id in GLOBAL_USER_ID_LIST:
+        send_off_duty_reminder(access_token(), user_id)
+
+
 def start_schedule():
-    schedule.every().day.at("07:55").do(update_user_id_list)
     schedule.every().day.at("08:00").do(daily_tasks_remainder)
     schedule.every().day.at("21:00").do(daily_report_remainder)
+    schedule.every().day.at("23:00").do(off_duty_reminder)
     while True:
         schedule.run_pending()
         time.sleep(1)
+
 
 if __name__ == "__main__":
     start_schedule()

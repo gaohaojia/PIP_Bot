@@ -51,6 +51,7 @@ def send_text_message(access_token, target_id, text, chat_type="p2p"):
     else:
         send_message_p2p(access_token, data)
 
+
 def send_post_message(access_token, target_id, content, chat_type="p2p"):
     data = {
         "receive_id": target_id,
@@ -166,3 +167,18 @@ def send_daily_report_link(access_token, target_id, chat_type="p2p"):
         send_message_group(access_token, data)
     else:
         send_message_p2p(access_token, data)
+
+
+def send_off_duty_reminder(access_token, user_id):
+    content = {
+        "type": "template",
+        "data": {
+            "template_id": "AAq7HXNXebttn",
+        },
+    }
+    data = {
+        "receive_id": user_id,
+        "msg_type": "interactive",
+        "content": json.dumps(content),
+    }
+    send_message_p2p(access_token, data)

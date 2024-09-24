@@ -5,7 +5,8 @@ from .send_message import (
     send_daily_remainder_no_task,
     send_text_message,
     send_daily_report_link,
-    send_post_message
+    send_post_message,
+    send_off_duty_reminder
 )
 
 __all__ = [
@@ -17,4 +18,6 @@ __all__ = [
     "send_daily_remainder_no_task",
     "send_text_message",
     "send_daily_report_link",
+    "send_post_message",
+    "send_off_duty_reminder",
 ]
