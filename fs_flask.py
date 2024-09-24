@@ -67,7 +67,33 @@ def handle_message_event(event):
                     "title": "PIP Bot 帮助",
                     "content": [
                         [
-                            {"tag": "md", "text": "**PIP Bot 目前支持以下功能：**\n"},
+                            {
+                                "tag": "text",
+                                "text": "欢迎使用 PIP Bot！\nPIP Bot 是由",
+                            },
+                            {
+                                "tag": "at",
+                                "user_id": config["MANAGER_USER_ID"],
+                            },
+                            {
+                                "tag": "text",
+                                "text": "开发的。开源地址：",
+                            },
+                            {
+                                "tag": "a",
+                                "text": "PIP Bot Github 仓库",
+                                "href": "https://github.com/gaohaojia/PIP_Bot",
+                            },
+                            {
+                                "tag": "text",
+                                "text": "。\n\n",
+                            },
+                        ],
+                        [
+                            {
+                                "tag": "md",
+                                "text": "**PIP Bot 目前支持以下功能：**\n",
+                            },
                             {
                                 "tag": "text",
                                 "text": "1. 发送日报：在群里 @PIP Bot 或私聊 PIP Bot 并发送关键字“日报”或“daily report”，即可发送日报链接到群聊或私聊。\n",

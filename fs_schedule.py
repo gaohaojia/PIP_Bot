@@ -1,3 +1,7 @@
+import time
+import schedule
+import yaml
+
 from fs_id import AccessTokenClass, get_chat_id, get_users_id_from_chat
 from fs_tasks import (
     get_projects_items,
@@ -9,12 +13,11 @@ from fs_tasks import (
     send_text_message,
     send_daily_report_link,
 )
-import time
-import schedule
-import threading
+
+with open("FS_KEY.yaml", "r") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
 CHAT_NAME = "战队大群"
-MANAGER_USER_ID = "ou_d11957b1eccd9e340b72fbc83c6eb41c"
 
 access_token = AccessTokenClass()
 
@@ -24,11 +27,11 @@ def update_user_id_list():
     global GLOBAL_USER_ID_LIST
     chat_id = get_chat_id(access_token(), CHAT_NAME)
     if not chat_id:
-        send_text_message(access_token(), MANAGER_USER_ID, "获取群聊ID失败")
+        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取群聊ID失败")
         exit()
     user_id_list = list(get_users_id_from_chat(access_token(), chat_id))
     if len(user_id_list) == 0:
-        send_text_message(access_token(), MANAGER_USER_ID, "获取用户列表失败")
+        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取用户列表失败")
         return
     GLOBAL_USER_ID_LIST = user_id_list
 
