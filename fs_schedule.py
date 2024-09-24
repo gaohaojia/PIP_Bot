@@ -18,8 +18,6 @@ from fs_tasks import (
 with open("FS_KEY.yaml", "r") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
-CHAT_NAME = "战队大群"
-
 access_token = AccessTokenClass()
 
 GLOBAL_USER_ID_LIST = []
@@ -27,7 +25,7 @@ GLOBAL_USER_ID_LIST = []
 
 def update_user_id_list():
     global GLOBAL_USER_ID_LIST
-    chat_id = get_chat_id(access_token(), CHAT_NAME)
+    chat_id = get_chat_id(access_token(), config["CHAT_NAME"])
     if not chat_id:
         send_text_message(access_token(), config["MANAGER_USER_ID"], "获取群聊ID失败")
         exit()

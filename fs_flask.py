@@ -4,8 +4,13 @@ import os
 import json
 import yaml
 
-from fs_tasks import send_daily_report_link, send_text_message, send_post_message
-from fs_id import AccessTokenClass
+from fs_tasks import (
+    send_daily_report_link,
+    send_text_message,
+    send_post_message,
+    send_off_duty_reminder,
+)
+from fs_id import AccessTokenClass, get_users_id_from_chat, get_chat_id
 
 with open("FS_KEY.yaml", "r") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -13,6 +18,21 @@ with open("FS_KEY.yaml", "r") as f:
 access_token = AccessTokenClass()
 
 app = Flask(__name__)
+
+GLOBAL_USER_ID_LIST = []
+
+
+def update_user_id_list():
+    global GLOBAL_USER_ID_LIST
+    chat_id = get_chat_id(access_token(), config["CHAT_NAME"])
+    if not chat_id:
+        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取群聊ID失败")
+        exit()
+    user_id_list = list(get_users_id_from_chat(access_token(), chat_id))
+    if len(user_id_list) == 0:
+        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取用户列表失败")
+        return
+    GLOBAL_USER_ID_LIST = user_id_list
 
 
 @app.route("/", methods=["POST"])
@@ -45,6 +65,10 @@ def handle_v2(req_data):
         handle_message_event(req_data.get("event"))
         return jsonify({"success": True})
 
+    if req_header.get("event_type") == "drive.file.bitable_record_changed_v1":
+        handle_bitable_event(req_data.get("event"))
+        return jsonify({"success": True})
+    print(req_data)
     return jsonify({"error": "Invalid request"}), 400
 
 
@@ -56,7 +80,10 @@ def handle_message_event(event):
         target_id = user_id
     elif message.get("chat_type") == "group":
         target_id = message.get("chat_id")
+    flag = False
     if message.get("message_type") == "text":
+        if user_id == config["MANAGER_USER_ID"]:
+            flag = handle_advanced_permission_event(message)
         text_content: str = json.loads(message.get("content")).get("text")
         if text_content.find("日报") != -1 or text_content.find("daily report") != -1:
             send_daily_report_link(access_token(), target_id, message.get("chat_type"))
@@ -118,12 +145,39 @@ def handle_message_event(event):
                 access_token(), target_id, content, message.get("chat_type")
             )
             return
+    if flag:
+        return
     send_text_message(
         access_token(),
         target_id,
         "PIP Bot 暂时还无法理解该内容，请给我学习的时间。\n回复“帮助”或“help”获取更多帮助。",
         message.get("chat_type"),
     )
+
+
+def handle_advanced_permission_event(message):
+    # 处理高级权限事件
+    text_content: str = json.loads(message.get("content")).get("text")
+    if text_content.find("下班提醒") != -1:
+        update_user_id_list()
+        for user_id in GLOBAL_USER_ID_LIST:
+            send_off_duty_reminder(access_token(), user_id)
+        return True
+    if text_content.find("打卡提醒") != -1:
+        update_user_id_list()
+        for user_id in GLOBAL_USER_ID_LIST:
+            send_daily_report_link(access_token(), user_id, "p2p")
+        return True
+    return False
+
+
+def handle_bitable_event(event):
+    # 处理bitable记录变更事件
+    user_id = event.get("operator_id").get("open_id")
+    action_list = event.get("action_list")
+    for action in action_list:
+        if action.get("action") == "record_added":
+            pass
 
 
 def start_flask():
