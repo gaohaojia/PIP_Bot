@@ -11,7 +11,7 @@ def get_good_morning_message():
     return random_line
 
 
-def send_message(access_token, data):
+def send_message_p2p(access_token, data):
     url = "	https://open.feishu.cn/open-apis/im/v1/messages"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -24,16 +24,43 @@ def send_message(access_token, data):
     print(response.text)
 
 
-def send_error_message(access_token, user_id, error_message):
+def send_message_group(access_token, data):
+    url = "	https://open.feishu.cn/open-apis/im/v1/messages"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json; charset=utf-8",
+    }
+    params = {
+        "receive_id_type": "chat_id",
+    }
+    response = requests.post(url, headers=headers, params=params, json=data)
+    print(response.text)
+
+
+def send_text_message(access_token, target_id, text, chat_type="p2p"):
     content = {
-        "text": error_message,
+        "text": text,
     }
     data = {
-        "receive_id": user_id,
+        "receive_id": target_id,
         "msg_type": "text",
         "content": json.dumps(content),
     }
-    send_message(access_token, data)
+    if chat_type == "group":
+        send_message_group(access_token, data)
+    else:
+        send_message_p2p(access_token, data)
+
+def send_post_message(access_token, target_id, content, chat_type="p2p"):
+    data = {
+        "receive_id": target_id,
+        "msg_type": "post",
+        "content": json.dumps(content),
+    }
+    if chat_type == "group":
+        send_message_group(access_token, data)
+    else:
+        send_message_p2p(access_token, data)
 
 
 def send_create_project_message(
@@ -64,7 +91,7 @@ def send_create_project_message(
         "msg_type": "interactive",
         "content": json.dumps(content),
     }
-    send_message(access_token, data)
+    send_message_p2p(access_token, data)
 
 
 def send_daily_remainder(
@@ -105,7 +132,7 @@ def send_daily_remainder(
         "msg_type": "interactive",
         "content": json.dumps(json_data),
     }
-    send_message(access_token, data)
+    send_message_p2p(access_token, data)
 
 
 def send_daily_remainder_no_task(access_token, user_id):
@@ -120,4 +147,22 @@ def send_daily_remainder_no_task(access_token, user_id):
         "msg_type": "interactive",
         "content": json.dumps(content),
     }
-    send_message(access_token, data)
+    send_message_p2p(access_token, data)
+
+
+def send_daily_report_link(access_token, target_id, chat_type="p2p"):
+    content = {
+        "type": "template",
+        "data": {
+            "template_id": "AAq7H6eapCzVc",
+        },
+    }
+    data = {
+        "receive_id": target_id,
+        "msg_type": "interactive",
+        "content": json.dumps(content),
+    }
+    if chat_type == "group":
+        send_message_group(access_token, data)
+    else:
+        send_message_p2p(access_token, data)
