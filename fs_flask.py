@@ -9,8 +9,11 @@ from fs_tasks import (
     send_text_message,
     send_post_message,
     send_off_duty_reminder,
+    get_tasks_by_user,
+    send_task_remainder,
+    send_daily_remainder_no_task,
 )
-from fs_id import AccessTokenClass, get_users_id_from_chat, get_chat_id
+from fs_id import AccessTokenClass, update_user_id_list
 
 with open("FS_KEY.yaml", "r") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -18,21 +21,6 @@ with open("FS_KEY.yaml", "r") as f:
 access_token = AccessTokenClass()
 
 app = Flask(__name__)
-
-GLOBAL_USER_ID_LIST = []
-
-
-def update_user_id_list():
-    global GLOBAL_USER_ID_LIST
-    chat_id = get_chat_id(access_token(), config["CHAT_NAME"])
-    if not chat_id:
-        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取群聊ID失败")
-        exit()
-    user_id_list = list(get_users_id_from_chat(access_token(), chat_id))
-    if len(user_id_list) == 0:
-        send_text_message(access_token(), config["MANAGER_USER_ID"], "获取用户列表失败")
-        return
-    GLOBAL_USER_ID_LIST = user_id_list
 
 
 @app.route("/", methods=["POST"])
@@ -80,13 +68,30 @@ def handle_message_event(event):
         target_id = user_id
     elif message.get("chat_type") == "group":
         target_id = message.get("chat_id")
-    flag = False
     if message.get("message_type") == "text":
         if user_id == config["MANAGER_USER_ID"]:
-            flag = handle_advanced_permission_event(message)
+            if handle_advanced_permission_event(message):
+                return
         text_content: str = json.loads(message.get("content")).get("text")
         if text_content.find("日报") != -1 or text_content.find("daily report") != -1:
             send_daily_report_link(access_token(), target_id, message.get("chat_type"))
+            return
+        if (
+            text_content.find("任务") != -1 or text_content.find("task") != -1
+        ) and message.get("chat_type") == "p2p":
+            task_name_list, task_priority_list, end_date_list = get_tasks_by_user(
+                access_token(), user_id
+            )
+            if len(task_name_list) > 0:
+                send_task_remainder(
+                    access_token(),
+                    user_id,
+                    task_name_list,
+                    task_priority_list,
+                    end_date_list,
+                )
+            else:
+                send_daily_remainder_no_task(access_token(), user_id)
             return
         if text_content.find("帮助") != -1 or text_content.find("help") != -1:
             content = {
@@ -131,6 +136,10 @@ def handle_message_event(event):
                             },
                             {
                                 "tag": "text",
+                                "text": "3. 发送任务：私聊 PIP Bot 并发送关键字“任务”或“task”，即可获取今日任务。\n",
+                            },
+                            {
+                                "tag": "text",
                                 "text": "其他功能正在开发中，敬请期待。",
                             },
                             {
@@ -145,8 +154,6 @@ def handle_message_event(event):
                 access_token(), target_id, content, message.get("chat_type")
             )
             return
-    if flag:
-        return
     send_text_message(
         access_token(),
         target_id,
@@ -159,13 +166,13 @@ def handle_advanced_permission_event(message):
     # 处理高级权限事件
     text_content: str = json.loads(message.get("content")).get("text")
     if text_content.find("下班提醒") != -1:
-        update_user_id_list()
-        for user_id in GLOBAL_USER_ID_LIST:
+        user_id_list = update_user_id_list()
+        for user_id in user_id_list:
             send_off_duty_reminder(access_token(), user_id)
         return True
     if text_content.find("打卡提醒") != -1:
-        update_user_id_list()
-        for user_id in GLOBAL_USER_ID_LIST:
+        user_id_list = update_user_id_list()
+        for user_id in user_id_list:
             send_daily_report_link(access_token(), user_id, "p2p")
         return True
     return False

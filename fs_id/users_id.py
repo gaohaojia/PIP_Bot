@@ -1,4 +1,24 @@
 import requests
+import yaml
+
+with open("FS_KEY.yaml", "r") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
+
+
+def get_chat_id(access_token, chat_name):
+    url = "https://open.feishu.cn/open-apis/im/v1/chats"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"page_size": 100}
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code != 200:
+        return None
+    result = response.json()
+    if result["code"] != 0:
+        return None
+    for chat in result["data"]["items"]:
+        if chat["name"] == chat_name:
+            return chat["chat_id"]
+    return None
 
 
 def get_users_id_from_chat(access_token, chat_id):
@@ -22,9 +42,18 @@ def get_users_id_from_chat(access_token, chat_id):
         page_token = result["data"]["page_token"]
 
 
+def update_user_id_list(access_token):
+    chat_id = get_chat_id(access_token, config["CHAT_NAME"])
+    if not chat_id:
+        return []
+    user_id_list = list(get_users_id_from_chat(access_token, chat_id))
+    if len(user_id_list) == 0:
+        return []
+    return user_id_list
+
+
 if __name__ == "__main__":
     from access_token import AccessTokenClass
-    from chat_id import get_chat_id
 
     access_token = AccessTokenClass()
     chat_id = get_chat_id(access_token(), "战队大群")
