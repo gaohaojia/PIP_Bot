@@ -238,12 +238,12 @@ def handle_attendance_event(event):
         if employee_id not in attendance_id_list:
             attendance_id_list.append(employee_id)
             send_check_in_message(
-                access_token(), convert_employee_id_to_user_id(employee_id)
+                access_token(), convert_employee_id_to_user_id(access_token(), employee_id)
             )
         else:
             attendance_id_list.remove(employee_id)
             send_check_out_message(
-                access_token(), convert_employee_id_to_user_id(employee_id)
+                access_token(), convert_employee_id_to_user_id(access_token(), employee_id)
             )
         for id in attendance_id_list:
             f.write(id + "\n")
