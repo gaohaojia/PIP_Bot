@@ -51,11 +51,25 @@ def update_user_id_list(access_token):
         return []
     return user_id_list
 
+def convert_employee_id_to_user_id(access_token, employee_id):
+    url = "https://open.feishu.cn/open-apis/contact/v3/users/{}".format(employee_id)
+    headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"user_id_type": "user_id"}
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code != 200:
+        return None
+    result = response.json()
+    if result["code"] != 0:
+        return None
+    return result["data"]["user"]["open_id"]
+
 
 if __name__ == "__main__":
     from access_token import AccessTokenClass
 
     access_token = AccessTokenClass()
-    chat_id = get_chat_id(access_token(), "战队大群")
-    for user_id in get_users_id_from_chat(access_token, chat_id):
-        print(user_id)
+    # chat_id = get_chat_id(access_token(), "战队大群")
+    # for user_id in get_users_id_from_chat(access_token, chat_id):
+    #     print(user_id)
+
+    print(convert_employee_id_to_user_id(access_token(), "c8a58b89"))

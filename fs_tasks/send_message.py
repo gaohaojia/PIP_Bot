@@ -215,3 +215,23 @@ def send_off_duty_reminder(access_token, user_id):
         "content": json.dumps(content),
     }
     send_message_p2p(access_token, data)
+
+def send_check_in_message(access_token, user_id):
+    with open("fs_tasks/card_json/check_in.json", "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+    data = {
+        "receive_id": user_id,
+        "msg_type": "interactive",
+        "content": json.dumps(json_data),
+    }
+    send_message_p2p(access_token, data)
+
+def send_check_out_message(access_token, user_id):
+    with open("fs_tasks/card_json/check_out.json", "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+    data = {
+        "receive_id": user_id,
+        "msg_type": "interactive",
+        "content": json.dumps(json_data),
+    }
+    send_message_p2p(access_token, data)

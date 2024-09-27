@@ -1,0 +1,52 @@
+{
+    "config": {
+        "update_multi": true
+    },
+    "i18n_elements": {
+        "zh_cn": [
+            {
+                "tag": "markdown",
+                "content": "记得离开实验室时打卡签退。",
+                "text_align": "left",
+                "text_size": "normal"
+            },
+            {
+                "tag": "action",
+                "actions": [
+                    {
+                        "tag": "button",
+                        "text": {
+                            "tag": "plain_text",
+                            "content": "打卡签退"
+                        },
+                        "type": "primary_filled",
+                        "width": "default",
+                        "size": "medium",
+                        "behaviors": [
+                            {
+                                "type": "open_url",
+                                "default_url": "https://applink.feishu.cn/T8Q12mbhULsf",
+                                "pc_url": "",
+                                "ios_url": "",
+                                "android_url": ""
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "i18n_header": {
+        "zh_cn": {
+            "title": {
+                "tag": "plain_text",
+                "content": "打卡成功"
+            },
+            "subtitle": {
+                "tag": "plain_text",
+                "content": ""
+            },
+            "template": "green"
+        }
+    }
+}
