@@ -232,8 +232,9 @@ def handle_bitable_event(event):
 
 def handle_attendance_event(event):
     # 处理考勤事件
-    with open("attendance.txt", "w+") as f:
+    with open("attendance.txt", "r") as f:
         attendance_id_list = f.readlines()
+        attendance_id_list = [id.strip() for id in attendance_id_list]
         employee_id = event.get("employee_id")
         if employee_id not in attendance_id_list:
             attendance_id_list.append(employee_id)
@@ -245,8 +246,11 @@ def handle_attendance_event(event):
             send_check_out_message(
                 access_token(), convert_employee_id_to_user_id(access_token(), employee_id)
             )
+    with open("attendance.txt", "w") as f:
+        str = ""
         for id in attendance_id_list:
-            f.write(id + "\n")
+            str += id + "\n"
+        f.write(str)
 
 
 def start_flask():
